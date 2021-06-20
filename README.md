@@ -3,20 +3,23 @@
 ## 核心功能
 
 1. 基础框架
-   1. `SpringBoot`
-   2. `SpringCloud`
-   3. `SpringCloud-Alibaba`
-    
+   1. 框架选型
+      1. `SpringBoot`
+      2. `SpringCloud`
+      3. `SpringCloud-Alibaba`
+   2. 版本关系 [链接](https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E)
+
 2. Nacos
-   1. Nacos 领域模型
+   1. Nacos中文手册 [链接](https://nacos.io/zh-cn/docs/what-is-nacos.html)
+   2. Nacos 领域模型
       1. namespace
       2. group
       3. service
       4. cluster
       6. instance
-   2. 元数据
-   3. 服务注册
-   4. 服务发现
+   3. 元数据
+   4. 服务注册
+   5. 服务发现
 
 3. Ribbon
    1. 手动实现客户端`RestTemplate`负载均衡
