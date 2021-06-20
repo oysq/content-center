@@ -1,0 +1,27 @@
+# 端口
+server:
+  port: 8090
+
+spring:
+  application:
+    # 服务名称尽量用-中划线，不要用_下划线和特殊字符
+    name: content-center
+  # nacos 地址
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+#        namespace: 8d4804ec-fbe6-4f5b-beb1-64e934a44ec4
+        cluster-name: XM
+        metadata:
+          version: v1
+  # 数据源
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/content_center?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: 1234
+
+#user-center:
+#  ribbon:
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
