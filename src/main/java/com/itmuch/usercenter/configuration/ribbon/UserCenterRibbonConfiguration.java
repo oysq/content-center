@@ -1,4 +1,4 @@
-package com.itmuch.usercenter.configuration;
+package com.itmuch.usercenter.configuration.ribbon;
 
 // 指定配置
 //@Configuration

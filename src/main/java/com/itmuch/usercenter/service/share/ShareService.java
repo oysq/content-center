@@ -4,6 +4,7 @@ import com.itmuch.usercenter.dao.ShareMapper;
 import com.itmuch.usercenter.domain.dto.content.ShareDTO;
 import com.itmuch.usercenter.domain.dto.user.UserDTO;
 import com.itmuch.usercenter.domain.entity.Share;
+import com.itmuch.usercenter.feignclient.UserCenterFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.RandomUtils;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +29,22 @@ public class ShareService {
 
     @Autowired
     private DiscoveryClient discoveryClient;
+
+    @Autowired
+    private UserCenterFeignClient userCenterFeignClient;
+
+    public ShareDTO findByIdWithFeign(Integer id) {
+        Share share = shareMapper.selectById(id);
+        Integer userId = share.getUserId();
+
+        UserDTO userDTO = userCenterFeignClient.findById(userId);
+
+        ShareDTO shareDTO = new ShareDTO();
+        BeanUtils.copyProperties(share, shareDTO);
+        shareDTO.setWxNickname(userDTO.getWxNickname());
+
+        return shareDTO;
+    }
 
     public ShareDTO findByIdWithRibbon(Integer id) {
         Share share = shareMapper.selectById(id);

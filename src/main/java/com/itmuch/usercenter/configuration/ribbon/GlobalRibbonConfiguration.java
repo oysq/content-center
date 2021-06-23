@@ -1,4 +1,4 @@
-package com.itmuch.usercenter.configuration;
+package com.itmuch.usercenter.configuration.ribbon;
 
 import org.springframework.cloud.netflix.ribbon.RibbonClients;
 import org.springframework.context.annotation.Configuration;

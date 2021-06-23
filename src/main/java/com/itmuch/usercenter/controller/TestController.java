@@ -3,6 +3,7 @@ package com.itmuch.usercenter.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.itmuch.usercenter.dao.NoticeMapper;
 import com.itmuch.usercenter.domain.entity.Notice;
+import com.itmuch.usercenter.feignclient.BaiduFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -20,6 +21,9 @@ public class TestController {
 
     @Autowired
     private DiscoveryClient discoveryClient;
+
+    @Autowired
+    private BaiduFeignClient baiduFeignClient;
 
     @GetMapping("/test")
     public List<Notice> test() {
@@ -42,6 +46,11 @@ public class TestController {
     @GetMapping("/test3")
     public List<String> test3() {
         return discoveryClient.getServices();
+    }
+
+    @GetMapping("/test4")
+    public String test4() {
+        return baiduFeignClient.getBaiduGuoJiNews();
     }
 
 

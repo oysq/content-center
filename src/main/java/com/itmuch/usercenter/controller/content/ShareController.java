@@ -17,7 +17,7 @@ public class ShareController {
 
     @GetMapping("/{id}")
     public ShareDTO test(@PathVariable Integer id) {
-        return shareService.findByIdWithRibbon(id);
+        return shareService.findByIdWithFeign(id);
     }
 
 }

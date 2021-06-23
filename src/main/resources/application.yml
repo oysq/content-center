@@ -22,6 +22,21 @@ spring:
     username: root
     password: 1234
 
+# 配置文件的方式配置 Ribbon
 #user-center:
 #  ribbon:
 #    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+# Feign 的日志配置只有在 logging 是 debug 时才生效
+logging:
+  level:
+    com.itmuch.usercenter.feignclient.UserCenterFeignClient: debug
+
+# 配置文件的方式配置 Feign
+#feign:
+#  client:
+#    config:
+#      default:
+#        loggerLevel: full
+#      user-center:
+#        loggerLevel: full
