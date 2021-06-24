@@ -6,11 +6,20 @@
 
 > 版本关系 [链接](https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E)
 
+#### 核心
+* `SpringBoot`
+* `SpringCloud`
+* `SpringCloud-Alibaba`
 
-#### 框架选型
-   1. `SpringBoot`
-   2. `SpringCloud`
-   3. `SpringCloud-Alibaba`
+#### 微服务组件
+* `Nacos`
+* `Ribbon`
+* `Feign`
+* `Sentinel`
+
+### 其他插件
+* `mybatis-plus`
+* `Lombok`
 
 ---
 
