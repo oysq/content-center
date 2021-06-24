@@ -40,7 +40,7 @@
    1. 通过 Feign 实现远程调用
       1. 实现方式：Contract 契约（`@FeignClient`注解支持`SpringMVC`的注解）
       2. 与 Ribbon 配合
-         1. 结合 Ribbon 的方式
+         1. Feign 默认会结合 Ribbon 的实现负载均衡
          2. 脱离 Ribbon 的方式，直接指定实际 URL 地址
    2. 修改 Feign 的日志级别（默认不打印任何日志，打印需要在 logging 本身配置是debug 级别下才生效）
       1. 配置文件方式（优先级更高，无需重启）
