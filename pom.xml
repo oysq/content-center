@@ -64,6 +64,12 @@
 <!--            <version>2.2.5.RELEASE</version>-->
         </dependency>
 
+        <!-- feign-httpclient -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-httpclient</artifactId>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

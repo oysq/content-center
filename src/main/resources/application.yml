@@ -33,10 +33,18 @@ logging:
     com.itmuch.usercenter.feignclient.UserCenterFeignClient: debug
 
 # 配置文件的方式配置 Feign
-#feign:
+feign:
+  httpclient:
+    # 使用 apache httpclient (带有连接池)，而不是默认的 HttpUrlConnection (没有连接池)
+    enabled: true
+    # 最大连接数
+    max-connections: 200
+    # 单个 url 的最大连接数
+    max-connections-per-route: 50
 #  client:
 #    config:
 #      default:
 #        loggerLevel: full
 #      user-center:
 #        loggerLevel: full
+
