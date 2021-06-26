@@ -1,18 +1,23 @@
 package com.itmuch.usercenter.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.itmuch.usercenter.dao.NoticeMapper;
 import com.itmuch.usercenter.domain.entity.Notice;
 import com.itmuch.usercenter.feignclient.BaiduFeignClient;
+import com.itmuch.usercenter.service.share.TestService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @RestController
 public class TestController {
 
@@ -24,6 +29,12 @@ public class TestController {
 
     @Autowired
     private BaiduFeignClient baiduFeignClient;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private TestService testService;
 
     @GetMapping("/test")
     public List<Notice> test() {
@@ -52,6 +63,37 @@ public class TestController {
     public String test4() {
         return baiduFeignClient.getBaiduGuoJiNews();
     }
+
+    @GetMapping("/test5")
+    public String test5() {
+        return "test5";
+    }
+
+    @GetMapping("/test6")
+    public String test6() throws InterruptedException {
+        for(int i = 0 ; i < 20 ; i ++) {
+            log.info("test ==> {}", i);
+            restTemplate.getForObject("http://content-center:9091/test5", String.class);
+            Thread.sleep(500);
+        }
+        return "模拟结束";
+    }
+
+    @GetMapping("/test7")
+    public String test7() {
+        this.testService.sentinelResource();
+        return "test7";
+    }
+
+    @GetMapping("/test8")
+    public String test8() {
+        this.testService.sentinelResource();
+        return "test8";
+    }
+
+
+
+
 
 
 }
