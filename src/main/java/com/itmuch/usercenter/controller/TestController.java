@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -91,6 +92,21 @@ public class TestController {
         return "test8";
     }
 
+    @GetMapping("/test9")
+    public String test9() {
+        for(int i = 0 ; i < 20 ; i ++) {
+            log.info("test9 ==> {}", i);
+            String res = restTemplate.getForObject("http://content-center:9091/test10/"+i, String.class);
+            log.info("test9 <== {}", res);
+        }
+        return "模拟结束";
+    }
+
+    @GetMapping("/test10/{id}")
+    public String test10(@PathVariable Integer id) {
+        log.info("test5 rcv {}", id);
+        return "res:"+id;
+    }
 
 
 }
