@@ -1,6 +1,9 @@
 package com.itmuch.usercenter.controller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.RuleConstant;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.itmuch.usercenter.dao.NoticeMapper;
 import com.itmuch.usercenter.domain.entity.Notice;
@@ -13,6 +16,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -112,6 +116,20 @@ public class TestController {
     public String test11(@RequestParam(required = false) String a,
                          @RequestParam(required = false) String b) {
         return a+" "+b;
+    }
+
+    @GetMapping("test12")
+    public String test12() {
+        List<FlowRule> rules = new ArrayList<>();
+        FlowRule rule = new FlowRule("/shares/{id}");
+        // set limit qps to 20
+        rule.setCount(2);
+        rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
+        rule.setLimitApp("default");
+        rules.add(rule);
+        FlowRuleManager.loadRules(rules);
+
+        return "success";
     }
 
 }
