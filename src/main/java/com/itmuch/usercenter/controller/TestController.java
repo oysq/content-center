@@ -1,6 +1,11 @@
 package com.itmuch.usercenter.controller;
 
+import com.alibaba.csp.sentinel.Entry;
+import com.alibaba.csp.sentinel.SphU;
+import com.alibaba.csp.sentinel.Tracer;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.context.ContextUtil;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
@@ -10,6 +15,7 @@ import com.itmuch.usercenter.domain.entity.Notice;
 import com.itmuch.usercenter.feignclient.BaiduFeignClient;
 import com.itmuch.usercenter.service.share.TestService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -111,6 +117,12 @@ public class TestController {
         return "res:"+id;
     }
 
+    /**
+     * 热点参数
+     * @param a
+     * @param b
+     * @return
+     */
     @GetMapping("test11")
     @SentinelResource("hot")
     public String test11(@RequestParam(required = false) String a,
@@ -118,6 +130,10 @@ public class TestController {
         return a+" "+b;
     }
 
+    /**
+     * java方式设置规则
+     * @return
+     */
     @GetMapping("test12")
     public String test12() {
         List<FlowRule> rules = new ArrayList<>();
@@ -130,6 +146,45 @@ public class TestController {
         FlowRuleManager.loadRules(rules);
 
         return "success";
+    }
+
+    /**
+     * Sentinel API
+     * @param a
+     * @return
+     */
+    @GetMapping("test13")
+    public String test13(@RequestParam(required = false) String a) {
+
+        String resourceName = "test-sentinel-api";
+
+        // 定义来源
+        ContextUtil.enter(resourceName, "xxx-wfw");
+
+        Entry entry = null;
+        try {
+
+            // 定义资源
+            entry = SphU.entry(resourceName);
+
+            // 业务代码
+            if(StringUtils.isBlank(a)) {
+                throw new IllegalAccessException("参数a不可空");
+            }
+            return "success: "+a;
+        } catch (BlockException e) {
+            log.error("限流或降级了");
+            return "限流或降级了";
+        } catch (IllegalAccessException e2) {
+            Tracer.trace(e2);
+            return "参数非法";
+        } finally {
+            if(entry != null) {
+                entry.exit();
+            }
+            ContextUtil.exit();
+        }
+
     }
 
 }

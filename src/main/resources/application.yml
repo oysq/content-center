@@ -23,6 +23,9 @@ spring:
         port: 18080
         # 心跳时间，单位毫秒
         heartbeat-interval-ms: 10000
+      filter:
+        # 关闭对 SpringMVC 端点的保护
+        enabled: false
 
   # 数据源
   datasource:

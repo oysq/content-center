@@ -197,3 +197,11 @@
 #### Sentinel 控制台参数配置
 
 > Sentinel 支持在启动控制台时指定 java 启动参数来修改地址、端口、账号密码等信息。
+
+#### Sentinel 核心 API
+
+> 不管是通过代码还是其它优雅的方式，底层的核心都是这三个API
+
+1. SphU：定义资源
+2. Tracer：统计异常
+3. ContextUtil：标记来源
