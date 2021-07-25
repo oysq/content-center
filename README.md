@@ -255,5 +255,5 @@ ________
 
 #### RESTFul Url 路径整合
 
-> 可以通过实现 `UrlCleaner` 接口来做全局资源路径处理，例如将 /share/{id} 和 /share/{age} 这两个请求的资源名称都改为 /share/select，这样就可以配置同一个限流降级规则
+> 可以通过实现 `UrlCleaner` 接口来做全局资源路径处理，例如将 /share/{id} 和 /share/{age} 这两个请求的资源名称都改为 /share/select，这样就可以为两个资源配置同一个限流降级规则
 

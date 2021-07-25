@@ -1,9 +1,11 @@
 package com.itmuch.usercenter.service.share;
 
 import com.itmuch.usercenter.dao.ShareMapper;
+import com.itmuch.usercenter.domain.dto.content.ShareAuditDTO;
 import com.itmuch.usercenter.domain.dto.content.ShareDTO;
 import com.itmuch.usercenter.domain.dto.user.UserDTO;
 import com.itmuch.usercenter.domain.entity.Share;
+import com.itmuch.usercenter.domain.enums.AuditStatusEnum;
 import com.itmuch.usercenter.feignclient.UserCenterFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.RandomUtils;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -87,6 +90,36 @@ public class ShareService {
         shareDTO.setWxNickname(userDTO.getWxNickname());
 
         return shareDTO;
+    }
+
+    /**
+     * 根据 id 审核
+     * @param id
+     * @param shareAuditDTO
+     * @return
+     */
+    public Share auditById(String id, ShareAuditDTO shareAuditDTO) {
+
+        // 是否存在
+        Share share = shareMapper.selectById(id);
+        if(share == null) {
+            throw new IllegalArgumentException("分享的主键id不存在");
+        }
+
+        // 是否待审核
+        if(!Objects.equals(share.getAuditStatus(), AuditStatusEnum.NOT_YET.toString())) {
+            throw new IllegalArgumentException("分享的已审核，请勿重复审批");
+        }
+
+        // 更新审核状态
+        share.setAuditStatus(shareAuditDTO.getAuditStatusEnum().toString());
+        shareMapper.updateById(share);
+
+        // 给作者加积分
+
+
+        // 返回
+        return share;
     }
 
 }
