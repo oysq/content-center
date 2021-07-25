@@ -14,6 +14,8 @@ public class MyUrlCleaner implements UrlCleaner {
         // 拦截处理后返回链路资源名称
         // 实现对 RESTful URL的预处理： /share/1 和 /share/2 的资源名都是 /share/{id}
 
+        // 不生效原因：该版本的 sentinel 传进来的是 “/share/{id}” 字符串
+
         return Arrays.stream(s.split("/"))
                 .map(str -> {
                     if(NumberUtils.isNumber(str)) {
