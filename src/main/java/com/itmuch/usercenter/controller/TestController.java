@@ -187,4 +187,41 @@ public class TestController {
 
     }
 
+    /**
+     * Sentinel 注解
+     * @param a
+     * @return
+     */
+    @GetMapping("test14")
+    @SentinelResource(
+            value = "test-sentinel-annotation",// 资源
+            blockHandler = "sentinelBlockHandler",// 处理限流或降级
+            fallback = "sentinelFallBackHandler"// 处理降级
+    )
+    public String test14(@RequestParam(required = false) String a) throws IllegalAccessException {
+        // 业务代码
+        if(StringUtils.isBlank(a)) {
+            throw new IllegalAccessException("参数a不可空");
+        }
+        return "success: "+a;
+    }
+
+    /**
+     * 处理限流或降级
+     * 必须是public，返回值类型和入参必须和 test14 相同
+     */
+    public String sentinelBlockHandler(String a, BlockException e) {
+        log.error("sentinelBlockHandler 限流或降级了", e);
+        return "sentinelBlockHandler 限流或降级了";
+    }
+
+    /**
+     * 处理降级
+     * 必须是public，返回值类型和入参必须和 test14 相同
+     */
+    public String sentinelFallBackHandler(String a) {
+        log.error("sentinelFallBackHandler 降级了");
+        return "sentinelFallBackHandler 降级了";
+    }
+
 }

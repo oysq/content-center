@@ -1,5 +1,6 @@
 package com.itmuch.usercenter;
 
+import com.alibaba.cloud.sentinel.annotation.SentinelRestTemplate;
 import com.itmuch.usercenter.configuration.feign.GlobalFeignConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -20,6 +21,7 @@ public class ContentCenterApplication {
 
     @Bean
     @LoadBalanced
+    @SentinelRestTemplate
     public RestTemplate getRestTemplate() {
         return new RestTemplate();
     }

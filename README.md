@@ -189,7 +189,7 @@
 
 注意：
   * 控制台地址、心跳时间、应用开放的 ip + port 都是可以在应用的 yml 的配置的。
-  * 控制台必须配置。
+  * 控制台地址必须配置。
   * 应用 ip 没配置，会自动生成一个。
   * 应用 port 没配置，会从8719开始扫描，依次加1，直到找到未被占用的端口。
   * 心跳时间：默认10秒
@@ -205,3 +205,47 @@
 1. SphU：定义资源
 2. Tracer：统计异常
 3. ContextUtil：标记来源
+
+#### Sentinel 注解埋点支持
+
+> 通过 `@SentinelResource` 注解的方式处理限流和降级，注意部分功能是 `1.6.0` 版本开始才支持
+
+`@SentinelResource` 注解包含以下属性：
+
+1. `value`：资源名称（注解的方式暂不支持指定来源）
+2. `entryType`；entry 类型，可选项（默认为 EntryType.OUT）
+3. `blockHandler` / `blockHandlerClass`：指定 `BlockException` 的处理方法和所在类。处理方法需要满足一下条件：
+  * 使用`public` 修饰符
+  * 返回值类型与原方法相同
+  * 参数类型需要和原方法相匹配并且最后加一个额外的参数，类型为 `BlockException`
+  * 若有指定 `blockHandlerClass`，则处理类必须使用 `static` 修饰符
+4. `fallback` / `fallbackClass`：指定异常时的处理函数（只要有异常就会进入该函数，而不是降级才会进入，所有异常都会进入，除非被 `exceptionsToIgnore` 排除。）处理方法需要满足一下条件：
+  * 使用`public` 修饰符
+  * 方法参数列表需要和原函数一致，或者可以额外多一个 Throwable 类型的参数用于接收对应的异常
+  * 若有指定 `blockHandlerClass`，则处理类必须使用 `static` 修饰符
+5. `defaultFallback`（since 1.6.0）：默认的 `fallback` 函数名称，可选项，通常用于通用的 `fallback` 逻辑
+6. `exceptionsToIgnore`（since 1.6.0）：用于指定哪些异常被排除掉，不会计入异常统计中，也不会进入 fallback 逻辑中，而是会原样抛出。
+
+#### RestTemplate 整合 Sentinel
+
+> 通过 `@SentinelRestTemplate` 注解即可，类似的，当 `RestTemplate` 发起的调用过多时限流、异常时降级。
+
+注意：可以通过在yml的 resttemplate.sentinel.enabled 配置进行启用或关闭
+
+#### Feign 整合 Sentinel
+
+> 通过在yml的 feign.sentinel.enabled = true 配置即可
+
+注意：可以在 `@FeignClient` 注解里指定限流和降级的处理方法。
+
+#### Sentinel 数据持久化
+
+> Sentinel 本身的数据只要重启就会丢失，需要自己集成第三方配置中心或者存储，添加持久化功能。（或者不再自己搭建控制台，使用阿里云提供的 `AHAS` 在线托管服务）
+
+#### 集群流控
+
+> 集群流控目前不够完善，无法用于生产环境，且功能效果可以被网关替代。
+
+使用方式：集成 `TokenServer`，包括独立部署一个 `TokenServer`，或将 `TokenServer` 嵌入到业务的微服务两种方式。
+
+
