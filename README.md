@@ -1,4 +1,5 @@
 # Spring-cloud-Alibaba 实现
+________
 
 ## 核心功能
 
@@ -248,4 +249,11 @@
 
 使用方式：集成 `TokenServer`，包括独立部署一个 `TokenServer`，或将 `TokenServer` 嵌入到业务的微服务两种方式。
 
+#### 区分来源
+
+> 除了可以通过 `ContextUtil` 标记来源之外，还可以通过实现 `RequestOriginParser` 接口来做全局来源标记。
+
+#### RESTFul Url 路径整合
+
+> 可以通过实现 `UrlCleaner` 接口来做全局资源路径处理，例如将 /share/{id} 和 /share/{age} 这两个请求的资源名称都改为 /share/select，这样就可以配置同一个限流降级规则
 
