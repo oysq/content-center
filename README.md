@@ -267,7 +267,7 @@ ________
 
 > 对比 `Kafka`、`RocketMQ`、`RabbitMQ` [链接](https://www.imooc.com/article/290040)
 
-#### windows 免安装部署
+#### windows 免安装部署 RocketMQ
 
 > 服务端分为 NameServer 和 Broker 两个服务。可以另外单独部署可视化控制台界面。
 
@@ -287,4 +287,15 @@ ________
    2. 进入 `\rocketmq-externals\rocketmq-console` 文件夹，执行 `mvn clean package -Dmaven.test.skip=true`，编译生成 target 文件
    3. `cmd` 进入 target 文件夹，执行 `java -jar rocketmq-console-ng-1.0.0.jar`，启动控制台
    4. 浏览器访问配置的端口地址
-    
+
+---
+
+### 消息编程模型
+
+#### 常见生产者
+
+* `RocketMQ`: `RocketMQTemplate`
+* `RabbitMQ`: `AmqpTemplate`
+* `ActiveMQ`/`Artemis`: `JmsTemplate`
+* `Kafka`: `KafkaTemplate`
+

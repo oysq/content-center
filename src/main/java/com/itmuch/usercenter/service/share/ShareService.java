@@ -3,12 +3,14 @@ package com.itmuch.usercenter.service.share;
 import com.itmuch.usercenter.dao.ShareMapper;
 import com.itmuch.usercenter.domain.dto.content.ShareAuditDTO;
 import com.itmuch.usercenter.domain.dto.content.ShareDTO;
+import com.itmuch.usercenter.domain.dto.message.UserAddBonusMessage;
 import com.itmuch.usercenter.domain.dto.user.UserDTO;
 import com.itmuch.usercenter.domain.entity.Share;
 import com.itmuch.usercenter.domain.enums.AuditStatusEnum;
 import com.itmuch.usercenter.feignclient.UserCenterFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.RandomUtils;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -35,6 +37,9 @@ public class ShareService {
 
     @Autowired
     private UserCenterFeignClient userCenterFeignClient;
+
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
 
     public ShareDTO findByIdWithFeign(Integer id) {
         Share share = shareMapper.selectById(id);
@@ -108,15 +113,24 @@ public class ShareService {
 
         // 是否待审核
         if(!Objects.equals(share.getAuditStatus(), AuditStatusEnum.NOT_YET.toString())) {
-            throw new IllegalArgumentException("分享的已审核，请勿重复审批");
+            throw new IllegalArgumentException("分享单已审核，请勿重复审批");
         }
 
         // 更新审核状态
-        share.setAuditStatus(shareAuditDTO.getAuditStatusEnum().toString());
+        share.setAuditStatus(shareAuditDTO.getAuditStatus().toString());
         shareMapper.updateById(share);
 
-        // 给作者加积分
-
+        // 如果是通过的话，给作者加积分
+        if(Objects.equals(shareAuditDTO.getAuditStatus(), AuditStatusEnum.PASS)) {
+            rocketMQTemplate.convertAndSend(
+                    "add-bonus",
+                    UserAddBonusMessage
+                            .builder()
+                            .userId(share.getUserId())
+                            .bonus(50)
+                            .build()
+            );
+        }
 
         // 返回
         return share;

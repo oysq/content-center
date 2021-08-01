@@ -13,7 +13,7 @@ public class ShareAuditDTO {
     /**
      * 审核状态
      */
-    private AuditStatusEnum auditStatusEnum;
+    private AuditStatusEnum auditStatus;
 
     /**
      * 原因

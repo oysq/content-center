@@ -73,3 +73,11 @@ resttemplate:
   sentinel:
     # 是否打开 @SentinelRestTemplate 的注解支持，默认true打开
     enabled: true
+
+# rocketmq
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    # 小坑：group 必须指定，否则项目无法启动
+    group: test-group
+
