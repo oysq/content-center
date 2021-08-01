@@ -299,3 +299,10 @@ ________
 * `ActiveMQ`/`Artemis`: `JmsTemplate`
 * `Kafka`: `KafkaTemplate`
 
+#### 常见消费者
+
+* `RocketMQ`: `@RocketMQMessageListener`
+* `RabbitMQ`: `@RabbitListener`
+* `ActiveMQ`/`Artemis`: `@JmsListener`
+* `Kafka`: `@KafkaListener`
+

@@ -118,6 +118,7 @@ public class ShareService {
 
         // 更新审核状态
         share.setAuditStatus(shareAuditDTO.getAuditStatus().toString());
+        share.setReason(shareAuditDTO.getReason());
         shareMapper.updateById(share);
 
         // 如果是通过的话，给作者加积分
