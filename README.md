@@ -289,21 +289,30 @@ ________
    3. `cmd` 进入 target 文件夹，执行 `java -jar rocketmq-console-ng-1.0.0.jar`，启动控制台
    4. 浏览器访问配置的端口地址
 
----
+#### 消息编程模型
 
-### 消息编程模型
+1. 常见生产者
+   * `RocketMQ`: `RocketMQTemplate`
+   * `RabbitMQ`: `AmqpTemplate`
+   * `ActiveMQ`/`Artemis`: `JmsTemplate`
+   * `Kafka`: `KafkaTemplate`
 
-#### 常见生产者
+2. 常见消费者
+   * `RocketMQ`: `@RocketMQMessageListener`
+   * `RabbitMQ`: `@RabbitListener`
+   * `ActiveMQ`/`Artemis`: `@JmsListener`
+   * `Kafka`: `@KafkaListener`
 
-* `RocketMQ`: `RocketMQTemplate`
-* `RabbitMQ`: `AmqpTemplate`
-* `ActiveMQ`/`Artemis`: `JmsTemplate`
-* `Kafka`: `KafkaTemplate`
+#### RocketMQ 分布式事务
 
-#### 常见消费者
+1. 流程图 [官网地址](https://rocketmq.apache.org/rocketmq/the-design-of-transactional-message/)
+![流程图](https://rocketmq.apache.org/assets/images/blog/transaction-execute-flow.png "流程图")
 
-* `RocketMQ`: `@RocketMQMessageListener`
-* `RabbitMQ`: `@RabbitListener`
-* `ActiveMQ`/`Artemis`: `@JmsListener`
-* `Kafka`: `@KafkaListener`
+2. 概念术语
+   * 半消息（half message）：生产者暂时存放到 MQ Server，等待本地事务执行完毕后再决定是投递（Commit）还是丢弃（Rollback）的消息。
+   * 消息回查（message check back）：网络等原因导致生产者丢失消息的二次确认，MQ Server 会对长时间处于半消息状态的的数据，主动向生产者发起最终状态的确认。
 
+3. 消息三态
+   * 未知（unknown）：等待二次确认或需要主动发起回查的消息状态。
+   * 提交（commit）：二次确认或回查成功，提交消费者的状态。
+   * 回滚（rollback）：二次确认或回查失败，需要丢弃的状态。
