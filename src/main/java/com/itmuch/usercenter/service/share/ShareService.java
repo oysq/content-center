@@ -20,6 +20,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -107,14 +108,14 @@ public class ShareService {
 
     /**
      * 根据 id 审核
-     * @param id
+     * @param shareId
      * @param paramDTO
      * @return
      */
-    public Share auditById(String id, ShareAuditDTO paramDTO) {
+    public Share auditById(String shareId, ShareAuditDTO paramDTO) {
 
         // 是否存在
-        Share share = shareMapper.selectById(id);
+        Share share = shareMapper.selectById(shareId);
         if(share == null) {
             throw new IllegalArgumentException("分享的主键id不存在");
         }
@@ -127,12 +128,12 @@ public class ShareService {
         // 如果是通过的话，给作者加积分
         if(Objects.equals(paramDTO.getAuditStatus(), AuditStatusEnum.PASS)) {
 
-            // 直接发送消息，不走事务
-            // this.sendMessage(share.getUserId());
+            // 发送半消息，走事务
+            this.sendMessageWithTx(share.getUserId(), shareId, paramDTO);
 
-            // 事务方式发送消息
-            this.sendMessageWithTx(share.getUserId(), paramDTO);
-
+        } else {
+            // 审核不通过，无需发送消息，不走事务
+            this.updateDb(shareId, paramDTO);
         }
 
         // 返回
@@ -155,11 +156,11 @@ public class ShareService {
     }
 
     /**
-     * 发送半消息
+     * 发送半消息，走事务
      * @param userId
      * @param paramDTO
      */
-    private void sendMessageWithTx(Integer userId, ShareAuditDTO paramDTO) {
+    private void sendMessageWithTx(Integer userId, String shareId, ShareAuditDTO paramDTO) {
         rocketMQTemplate.sendMessageInTransaction(
                 "tx-add-bonus-group",
                 "add-bonus",
@@ -172,7 +173,7 @@ public class ShareService {
                                         .build()
                         )
                         .setHeader(RocketMQHeaders.TRANSACTION_ID, UUID.randomUUID().toString())
-                        .setHeader("share_id", userId)
+                        .setHeader("share_id", shareId)
                         .build(),
                 paramDTO
         );
@@ -183,6 +184,7 @@ public class ShareService {
      * @param shareId
      * @param paramDTO
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateDb(String shareId, ShareAuditDTO paramDTO) {
         // 更新审核状态
         Share share = Share.builder()
@@ -198,6 +200,7 @@ public class ShareService {
      * @param shareId
      * @param paramDTO
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateDbWithTx(String shareId, ShareAuditDTO paramDTO, String transactionId) {
         // 更新审核状态
         this.updateDb(shareId, paramDTO);

@@ -281,6 +281,7 @@ ________
    3. `cmd` 进入 `bin` 文件夹，执行命令 `start mqbroker.cmd -n 127.0.0.1:9876 autoCreateTopicEnable=true` 启动 **broker**
       * 这里的 -n 参数指定的是 nameServer 的地址端口
       * 弹窗界面没有任何提示是正常的
+      * 提示：第二次启动失败时，删除C:/用户/对应账号文件夹/store  文件夹内容，然后重新启动。
 3. 启动控制台界面
    1. 控制台为 SpringBoot 项目，解压后进入 `rocketmq-externals\rocketmq-console\src\main\resources` 文件夹，打开 `application.properties` 进行配置
       * `server.port` = 控制台端口
@@ -313,6 +314,6 @@ ________
    * 消息回查（message check back）：网络等原因导致生产者丢失消息的二次确认，MQ Server 会对长时间处于半消息状态的的数据，主动向生产者发起最终状态的确认。
 
 3. 消息三态
-   * 未知（unknown）：等待二次确认或需要主动发起回查的消息状态。
-   * 提交（commit）：二次确认或回查成功，提交消费者的状态。
-   * 回滚（rollback）：二次确认或回查失败，需要丢弃的状态。
+   * `RocketMQLocalTransactionState.UNKNOWN`（未知）：等待二次确认或需要主动发起回查的消息状态。
+   * `RocketMQLocalTransactionState.COMMIT `（提交）：二次确认或回查成功，提交消费者的状态。
+   * `RocketMQLocalTransactionState.ROLLBACK`（回滚）：二次确认或回查失败，需要丢弃的状态。

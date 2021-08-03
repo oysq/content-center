@@ -13,13 +13,13 @@ public class ShareAdminController {
     @Autowired
     private ShareService shareService;
 
-    @PutMapping("/audit/{id}")
-    public Share auditById(@PathVariable String id, @RequestBody ShareAuditDTO shareAuditDTO) {
+    @PutMapping("/audit/{shareId}")
+    public Share auditById(@PathVariable String shareId, @RequestBody ShareAuditDTO shareAuditDTO) {
 
         // TODO 认证，授权
 
         // 处理业务
-        return shareService.auditById(id, shareAuditDTO);
+        return shareService.auditById(shareId, shareAuditDTO);
     }
 
 }
