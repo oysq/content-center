@@ -317,3 +317,6 @@ ________
    * `RocketMQLocalTransactionState.UNKNOWN`（未知）：等待二次确认或需要主动发起回查的消息状态。
    * `RocketMQLocalTransactionState.COMMIT `（提交）：二次确认或回查成功，提交消费者的状态。
    * `RocketMQLocalTransactionState.ROLLBACK`（回滚）：二次确认或回查失败，需要丢弃的状态。
+
+4. 注意
+   * 消息回查的功能在 `V4.3.0` 版本才开始使用，之前的版本不会生效。
