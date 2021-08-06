@@ -19,6 +19,10 @@ ________
 * `Feign`
 * `Sentinel`
 
+#### 队列/存储
+* `MySQL`
+* `RocketMQ`
+
 ### 其他插件
 * `mybatis-plus`
 * `Lombok`
