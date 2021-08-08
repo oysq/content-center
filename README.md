@@ -264,15 +264,17 @@ ________
 
 ---
 
-### RocketMQ
+### 消息驱动的微服务
+
+#### RocketMQ
 
 > RocketMQ 中文手册 [链接](https://github.com/apache/rocketmq/tree/master/docs/cn)
 
-#### 同类产品比较
+##### 同类产品比较
 
 > 对比 `Kafka`、`RocketMQ`、`RabbitMQ` [链接](https://www.imooc.com/article/290040)
 
-#### windows 免安装部署 RocketMQ
+##### windows 免安装部署 RocketMQ
 
 > 服务端分为 NameServer 和 Broker 两个服务。可以另外单独部署可视化控制台界面。
 
@@ -294,7 +296,7 @@ ________
    3. `cmd` 进入 target 文件夹，执行 `java -jar rocketmq-console-ng-1.0.0.jar`，启动控制台
    4. 浏览器访问配置的端口地址
 
-#### RocketMQ 部署上云的坑
+##### RocketMQ 部署上云的坑
 
 1. 需要在 `conf/broker.conf` 文件指定 `brokerIP1=broker的地址`，并在启动 `broker` 时 `-n` 指定 `nameSrv` 地址，`-c` 指定 `broker.conf` 配置文件
 2. 上云的启动脚本举例：
@@ -302,33 +304,63 @@ ________
    * `nohup sh bin/mqbroker -n nameSrv的IP:nameSrv的端口 -c conf/broker.conf &`
 3. 如果遇到本地调试访问失败，上述两步的地址都要改成公网地址。
    
-#### 消息编程模型
+#### Spring消息 编程模型
 
-1. 常见生产者
-   * `RocketMQ`: `RocketMQTemplate`
-   * `RabbitMQ`: `AmqpTemplate`
-   * `ActiveMQ`/`Artemis`: `JmsTemplate`
-   * `Kafka`: `KafkaTemplate`
+1. 常见生产者/消费者
+   1. 生产者
+      * `RocketMQ`: `RocketMQTemplate`
+      * `RabbitMQ`: `AmqpTemplate`
+      * `ActiveMQ`/`Artemis`: `JmsTemplate`
+      * `Kafka`: `KafkaTemplate`
+   2. 消费者
+      * `RocketMQ`: `@RocketMQMessageListener`
+      * `RabbitMQ`: `@RabbitListener`
+      * `ActiveMQ`/`Artemis`: `@JmsListener`
+      * `Kafka`: `@KafkaListener`
 
-2. 常见消费者
-   * `RocketMQ`: `@RocketMQMessageListener`
-   * `RabbitMQ`: `@RabbitListener`
-   * `ActiveMQ`/`Artemis`: `@JmsListener`
-   * `Kafka`: `@KafkaListener`
+2. 分布式事务（Spring消息编程模型 + RocketMQ 实现）
 
-#### RocketMQ 分布式事务
+   1. 流程图 [官网地址](https://rocketmq.apache.org/rocketmq/the-design-of-transactional-message/)
+   ![流程图](https://rocketmq.apache.org/assets/images/blog/transaction-execute-flow.png "流程图")
+   
+   2. 概念术语
+      * 半消息（half message）：生产者暂时存放到 MQ Server，等待本地事务执行完毕后再决定是投递（Commit）还是丢弃（Rollback）的消息。
+      * 消息回查（message check back）：网络等原因导致生产者丢失消息的二次确认，MQ Server 会对长时间处于半消息状态的的数据，主动向生产者发起最终状态的确认。
+   
+   3. 消息三态
+      * `RocketMQLocalTransactionState.UNKNOWN`（未知）：等待二次确认或需要主动发起回查的消息状态。
+      * `RocketMQLocalTransactionState.COMMIT `（提交）：二次确认或回查成功，提交消费者的状态。
+      * `RocketMQLocalTransactionState.ROLLBACK`（回滚）：二次确认或回查失败，需要丢弃的状态。
+   
+   4. 注意
+      * 消息回查的功能在 `V4.3.0` 版本才开始使用，之前的版本不会生效。
+   
+#### SpringCloudStream 编程模型
 
-1. 流程图 [官网地址](https://rocketmq.apache.org/rocketmq/the-design-of-transactional-message/)
-![流程图](https://rocketmq.apache.org/assets/images/blog/transaction-execute-flow.png "流程图")
+1. 基本概念
+   1. Destination Binder（目标绑定器）
+      * 集成 SpringCloudStream 框架后在应用外围包裹的一个组件，用于与消息中间件通信。
+   2. Destination Bindings（目标绑定）
+      * 由 Binder 创建的桥梁，用于消息的生产和消费。
+   3. Message（消息）
+      * Bindings 上传递的内容。
+   
+2. 自定接口实现和直接注入自带的 `Source.class`/`Sink.class` 的区别
+   * 没有区别，自定义实现的代码和自带类的源码是一模一样的，都是在启动类上加注解的时候注入了这个类，并通过 `@Output` 和 `@Input` 的值与配置文件去匹配，所以配置文件中的名字要和类里的名字一样。
+   * 除了 `Source.class` 和 `Sink.class` 之外，还有个 `Processor.class`，它继承了 `Source.class` 和 `Sink.class`，可以同时作为生产者和消费者。
 
-2. 概念术语
-   * 半消息（half message）：生产者暂时存放到 MQ Server，等待本地事务执行完毕后再决定是投递（Commit）还是丢弃（Rollback）的消息。
-   * 消息回查（message check back）：网络等原因导致生产者丢失消息的二次确认，MQ Server 会对长时间处于半消息状态的的数据，主动向生产者发起最终状态的确认。
+3. 过滤消息
+   1. 可以通过设置 `@StreamListener` 中的 `condition` 参数，达到只接收符合条件的消息。
+   2. rocketmq 还支持 tags 和 sql 的方式过滤消息，这两种方式只有 rocketmq 支持。
+   
+4. 异常处理
+   * `@StreamListener("errorChannel")`
+   
+5. 监控
+   1. spring-cloud-stream 提供了三个 actuator 端点进行监控：
+      * /actuator/bindings
+      * /actuator/channels
+      * /actuator/health
 
-3. 消息三态
-   * `RocketMQLocalTransactionState.UNKNOWN`（未知）：等待二次确认或需要主动发起回查的消息状态。
-   * `RocketMQLocalTransactionState.COMMIT `（提交）：二次确认或回查成功，提交消费者的状态。
-   * `RocketMQLocalTransactionState.ROLLBACK`（回滚）：二次确认或回查失败，需要丢弃的状态。
-
-4. 注意
-   * 消息回查的功能在 `V4.3.0` 版本才开始使用，之前的版本不会生效。
+2. 分布式事务（SpringCloudStream 编程模型 + RocketMQ 实现）
+   * 整体流程和Spring消息编程相同（干扰代码，不再写 demo 测试）
