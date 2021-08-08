@@ -2,16 +2,13 @@
 *README.md 是我对知识点的归纳，方便后续翻阅回忆，工程代码是我对知识点的实践样例。*
 ________
 
-## 核心功能
-
 ### 基础框架
 
-> 版本关系 [链接](https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E)
-
 #### 核心
-* `SpringBoot`
-* `SpringCloud`
-* `SpringCloud-Alibaba`
+* `Spring Boot`
+* `Spring Cloud`
+* `Spring Cloud Alibaba`
+* `Spring Cloud Stream`
 
 #### 微服务组件
 * `Nacos`
@@ -23,9 +20,17 @@ ________
 * `MySQL`
 * `RocketMQ`
 
-### 其他插件
+#### 其他插件
 * `mybatis-plus`
 * `Lombok`
+
+---
+
+### 常用链接
+
+> Spring 生态官网 [链接](https://spring.io/projects)
+> 
+> Alibaba 版本依赖 [链接](https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E)
 
 ---
 
