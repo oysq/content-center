@@ -10,19 +10,21 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: ${REMOTE-SERVER-IP:127.0.0.1}:8848
 #        namespace: 8d4804ec-fbe6-4f5b-beb1-64e934a44ec4
         cluster-name: XM
         metadata:
           version: v1
     sentinel:
-      transport:
-        # 指定 sentinel 控制台地址
-        dashboard: localhost:8080
-        client-ip: 127.0.0.1
-        port: 18080
-        # 心跳时间，单位毫秒
-        heartbeat-interval-ms: 10000
+      # sentinel 控制台已经上云，访问不到本地，暂时不连接
+#      transport:
+#        # 指定 sentinel 控制台地址
+#        dashboard: ${REMOTE-SERVER-IP:127.0.0.1}:18080
+#        # 指定接收控制台信息的本地地址
+#        client-ip: ${REMOTE-SERVER-IP:127.0.0.1}
+#        port: 18181
+#        # 心跳时间，单位毫秒
+#        heartbeat-interval-ms: 10000
       filter:
         # 是否打开对 SpringMVC 端点（如 @GetMapping）的保护，默认true打开
         enabled: true
@@ -30,9 +32,9 @@ spring:
   # 数据源
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/content_center?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
-    username: root
-    password: 1234
+    url: jdbc:mysql://${REMOTE-SERVER-IP:127.0.0.1}:3306/content_center?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: ${REMOTE-USER-NAME}
+    password: ${REMOTE-PASS-WORD}
 
 # 配置文件的方式配置 Ribbon
 #user-center:
@@ -76,7 +78,7 @@ resttemplate:
 
 # rocketmq
 rocketmq:
-  name-server: 127.0.0.1:9876
+  name-server: ${REMOTE-SERVER-IP:127.0.0.1}:9876
   producer:
     # 小坑：group 必须指定，否则项目无法启动
     group: test-group

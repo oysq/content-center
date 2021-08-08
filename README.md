@@ -294,6 +294,14 @@ ________
    3. `cmd` 进入 target 文件夹，执行 `java -jar rocketmq-console-ng-1.0.0.jar`，启动控制台
    4. 浏览器访问配置的端口地址
 
+#### RocketMQ 部署上云的坑
+
+1. 需要在 `conf/broker.conf` 文件指定 `brokerIP1=broker的地址`，并在启动 `broker` 时 `-n` 指定 `nameSrv` 地址，`-c` 指定 `broker.conf` 配置文件
+2. 上云的启动脚本举例：
+   * `nohup sh bin/mqnamesrv &`
+   * `nohup sh bin/mqbroker -n nameSrv的IP:nameSrv的端口 -c conf/broker.conf &`
+3. 如果遇到本地调试访问失败，上述两步的地址都要改成公网地址。
+   
 #### 消息编程模型
 
 1. 常见生产者
