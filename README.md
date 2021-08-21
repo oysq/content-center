@@ -6,9 +6,9 @@ ________
 
 #### 核心
 * `Spring Boot`
-* `Spring Cloud`
 * `Spring Cloud Alibaba`
 * `Spring Cloud Stream`
+* `Spring Cloud Gateway`
 
 #### 微服务组件
 * `Nacos`
@@ -369,3 +369,12 @@ ________
 
 2. 分布式事务（SpringCloudStream 编程模型 + RocketMQ 实现）
    * 整体流程和Spring消息编程相同（干扰代码，不再写 demo 测试）
+   
+---
+
+### SpringCloudGateway
+
+> SpringCloudGateway 是 SpringCloud 的第二代网关，基于 Netty、Reactor、WebFlux构建，将会取代第一代的网关 Zuul（性能相比提升了1.6倍）
+> 
+> 注意：SpringCloudGateway 无法在 servlet 容器（如 tomcat）下工作，也无法打成 war 包，且只支持 SpringBoot 2.0+。 
+

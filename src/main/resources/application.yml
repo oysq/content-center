@@ -53,7 +53,7 @@ spring:
 # Feign 的日志配置只有在 logging 是 debug 时才生效
 logging:
   level:
-    com.itmuch.usercenter.feignclient.UserCenterFeignClient: debug
+    com.oysq.usercenter.feignclient.UserCenterFeignClient: debug
 
 # 配置文件的方式配置 Feign
 feign:
