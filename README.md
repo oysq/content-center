@@ -378,3 +378,14 @@ ________
 > 
 > 注意：SpringCloudGateway 无法在 servlet 容器（如 tomcat）下工作，也无法打成 war 包，且只支持 SpringBoot 2.0+。 
 
+#### 核心概念
+1. Route（路由）：转发规则，包含ID、目标URL、Predicate集合以及Filter集合。
+2. Predicate（断言）：匹配路由的条件，实现方式是 java.util.function.Predicate 的函数接口。
+3. Filter（过滤器）：对请求和响应的自定义修改。
+
+#### 工作原理
+1. 流程图 [官网地址](https://docs.spring.io/spring-cloud-gateway/docs/2.2.9.RELEASE/reference/html/#gateway-how-it-works)
+   
+![流程图](https://docs.spring.io/spring-cloud-gateway/docs/2.2.9.RELEASE/reference/html/images/spring_cloud_gateway_diagram.png)
+
+
