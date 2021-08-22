@@ -388,4 +388,111 @@ ________
    
 ![流程图](https://docs.spring.io/spring-cloud-gateway/docs/2.2.9.RELEASE/reference/html/images/spring_cloud_gateway_diagram.png)
 
+#### 三种 uri 路由方式
+1. 路由到指定URL
+```
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: my_route
+        uri: http://www.baidu.com
+        predicates:
+          - Path=/shares/**
+        filters:
+          - AddRequestHeader=x-oysq, test1
+```
 
+2. 路由到 websocket
+```
+uri: ws://1.1.1.1:1111
+```
+
+3. 路由到服务发现组件上的微服务
+  * gateway能识别的微服务明必须符合正则：`[a-zA-Z]([a-zA-Z]|\\d|\\+|\\.|-)*:.*`
+  * 注意：该正则不含有下划线 `_`
+```
+uri: lb://content-center
+```
+
+#### 两种匹配方式
+1. 通配：访问 http://{gateway_url}/** 会转发到 http://www.baidu.com/**
+```
+   uri: http://www.baidu.com
+```
+2. 精确匹配：访问 http://{gateway_url}/abc/123 会转发到 http://www.baidu.com/abc/123
+```
+   uri: http://www.baidu.com/abc/123
+```
+
+#### 十种内置的谓词工厂
+> 注意：存在多个断言时，匹配优先级是从上到下，并不是根据匹配程度。
+> 
+> 技巧：时间可使用 System.out.println(ZonedDateTime.now()); 打印，然后即可看到时区。例如：2021-09-19T17:21:23.243+08:00[Asia/Shanghai]
+
+| 谓词 |
+| :---- |
+| After |
+| Before |
+| Between |
+| Cookie |
+| Header |
+| Host |
+| Method |
+| Path |
+| Query |
+| RemoteAddr |
+
+#### 自定义谓词工厂
+> 自定义谓词工厂的类名必须是：谓词+RoutePredicateFactory
+> 
+> 例如自定义谓词 Contain, 则类名必须是 ContainRoutePredicateFactory
+
+* 方法概述：自定义谓词工厂类，继承 `AbstractRoutePredicateFactory` 抽象类，实现 `shortcutFieldOrder()` 接口来将yml文件的谓词与配置类的字段一一对应起来，实现 `apply()` 方法返回一个 Predicate 函数式接口进行判断是否断言成功，有点像策略模式
+* 详细信息看 oysq/gateway 项目里面的demo
+
+#### 26种内置过滤器工厂
+```
+# 举例：为请求添加 header 头 x-oysq, 值为 test1
+filters:
+  - AddRequestHeader=x-oysq, test1
+```
+
+#### 自定义过滤器工厂
+> 自定义过滤器工厂的类名必须是：过滤器名+GatewayFilterFactory
+>
+> 例如自定义过滤器 PreLog, 则类名必须是 PreLogGatewayFilterFactory
+
+1. 过滤器声明周期
+  * pre：Gateway 转发请求之前
+  * post：Gateway 转发请求之后
+2. 核心 API
+  * exchange.getRequest().mutate().xxx //修改 request
+  * exchange.mutate().xxx //修改 exchange
+  * chain.filter(exchange) //传递给下一个过滤器
+  * exchange.getResponse() //修改响应
+3. 实现方式
+> 注意：两种实现的方式，最后在yml配置文件里面的配置方式是不一样的
+  * 继承 `AbstractGatewayFilterFactory`
+  * 继承 `AbstractNameValueGatewayFilterFactory`(内部继承了上一种方式，是上一种方式的简化版)
+
+#### 局部过滤器的执行顺序
+> 一个Route中可以配置多条局部过滤器，从上到下的执行顺序从1开始递增。
+>
+> 若配置了默认过滤器 `default-filters`，则先执行默认的1，再执行Route中的1，然后再执行默认的2，以此类推。
+>
+> 自定义过滤器工厂可以通过返回 `OrderedGatewayFilter` 来改变 `Order` 顺序
+
+#### 全局过滤器
+> 全局过滤器有9种，并且可以通过 @Order 的方式指定执行顺序，数字越小，优先级越高。
+
+#### gateway 监控端点
+* GET http://localhost:8040/actuator/gateway/routes // 查看所有路由
+* POST http://localhost:8040/actuator/gateway/refresh // 刷新路由缓存
+
+> 此外还支持动态添加、修改、删除路由，查看全局路由等等
+
+#### 其他
+> `SpringCloudGateway` 默认使用 `Hystrix` 进行容错，也可以改为 `Sentinel`，但是要 `1.6` 版本开始的 `Sentinel` 才支持。此外，还可以集成 `redis` 进行集群限流（基于令牌桶算法的实现）。
+> 
+> `SpringCloudGateway` 集成了 `Ribbon`，因此默认自带了对 `lb` 微服务的负载均衡。

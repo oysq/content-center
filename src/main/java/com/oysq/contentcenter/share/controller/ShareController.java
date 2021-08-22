@@ -17,6 +17,7 @@ public class ShareController {
 
     @GetMapping("/{id}")
     public ShareDTO test(@PathVariable Integer id) {
+        // ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest().getHeaderNames()
         return shareService.findByIdWithFeign(id);
     }
 
