@@ -495,4 +495,4 @@ filters:
 #### 其他
 > `SpringCloudGateway` 默认使用 `Hystrix` 进行容错，也可以改为 `Sentinel`，但是要 `1.6` 版本开始的 `Sentinel` 才支持。此外，还可以集成 `redis` 进行集群限流（基于令牌桶算法的实现）。
 > 
-> `SpringCloudGateway` 集成了 `Ribbon`，因此默认自带了对 `lb` 微服务的负载均衡。
+> `SpringCloudGateway` 默认集成了 `Ribbon`，因此自带了对 `lb` 微服务的负载均衡。
