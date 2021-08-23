@@ -496,3 +496,28 @@ filters:
 > `SpringCloudGateway` 默认使用 `Hystrix` 进行容错，也可以改为 `Sentinel`，但是要 `1.6` 版本开始的 `Sentinel` 才支持。此外，还可以集成 `redis` 进行集群限流（基于令牌桶算法的实现）。
 > 
 > `SpringCloudGateway` 默认集成了 `Ribbon`，因此自带了对 `lb` 微服务的负载均衡。
+
+---
+
+### NacosConfig
+
+#### 读取规则
+1. `NacosConfig` 有自己的配置文件 `bootstrap.yml`
+   * 原因：和 `application.yml` 区分开来可以实现配置中心部署一套 `nacos` 集群（通过 `spring.cloud.nacos.config.server-addr` 指定），服务注册用另外一套 `nacos` 集群（通过 `spring.cloud.nacos.discovery.server-addr` 指定），互不影响。
+
+2. `NacosConfig` 采用约定大于配置的方式
+   * `Nacos` 上的配置文件名为 {`spring.application.name`} + "-" + {`spring.profiles.active`} + "." + {`sring.cloud.nacos.config.file-extension`} 
+   * 如 `content-center-dev.yaml`
+   * 目前只支持 `yaml`/`properties` 文件
+
+3. 不同启动方式的区别
+   * 指定的 `spring.profiles.active` 存在匹配的文件时，使用指定的 active 文件（如 `content-center-dev.yaml`）
+   * 指定的 `spring.profiles.active` 不存在匹配的文件时，使用通用的文件（即没有 `active` 后缀的 `content-center.yaml`）
+
+#### 不同应用(spring.application)间共用同一份配置的方式
+* `shared-dataids`
+* `ext-config`
+
+#### 文件读取优先级
+* `shared-dataids` < `ext-config` < `content-center.yaml` < `content-center-dev.yaml`
+* 本地配置 < 远程配置 （这一个优先级可以通过配置改变）

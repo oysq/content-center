@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: ${REMOTE-SERVER-IP:127.0.0.1}:8848
+        file-extension: yaml
+  application:
+    name: content-center
+  profiles:
+    active: abc
