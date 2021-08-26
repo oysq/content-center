@@ -15,6 +15,7 @@ ________
 * `Ribbon`
 * `Feign`
 * `Sentinel`
+* `Sleuth`
 
 #### 队列/存储
 * `MySQL`
@@ -521,3 +522,17 @@ filters:
 #### 文件读取优先级
 * `shared-dataids` < `ext-config` < `content-center.yaml` < `content-center-dev.yaml`
 * 本地配置 < 远程配置 （这一个优先级可以通过配置改变）
+
+---
+
+### 链路日志
+
+#### sleuth
+1. 术语
+  * span（跨度）：sleuth 的基本工作单元。每个 sleuth 有一个唯一的64位ID作为标识。此外还有一些其它的数据，如时间戳、标签、描述等。
+  * trace（跟踪）：由一组 span 组成的树桩结构称为一个 trance。
+  * annotation（标注）：表示一个行为。
+    * CS (client sent)；客户端发起一个请求，这是一个 span 的开始。
+    * SR (server received)：服务器接收并准备处理它。
+    * SS (server sent)：服务器处理结束，准备响应客户端。
+    * CR (client received)：客户端成功接收到服务器的响应，这是一个 span 的结束。

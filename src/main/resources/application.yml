@@ -54,6 +54,7 @@ spring:
 logging:
   level:
     com.oysq.usercenter.feignclient.UserCenterFeignClient: debug
+#    org.springframework.cloud.sleuth: debug
 
 # 配置文件的方式配置 Feign
 feign:

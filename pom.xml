@@ -102,6 +102,12 @@
             <version>2.2.0.RELEASE</version>
         </dependency>
 
+        <!-- sleuth -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
