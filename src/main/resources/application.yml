@@ -44,6 +44,13 @@ spring:
     url: jdbc:mysql://${REMOTE-SERVER-IP:127.0.0.1}:3306/content_center?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
     username: ${REMOTE-USER-NAME}
     password: ${REMOTE-PASS-WORD}
+  zipkin:
+    base-url: http://${REMOTE-SERVER-IP:127.0.0.1}:9411
+  sleuth:
+    sampler:
+      # 抽样率，默认值是 0.1 (10%)
+      probability: 1.0
+
 
 # 配置文件的方式配置 Ribbon
 #user-center:

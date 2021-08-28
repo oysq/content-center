@@ -6,6 +6,8 @@ import com.oysq.contentcenter.share.service.ShareAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/admin/shares")
 public class ShareAdminController {
@@ -21,5 +23,13 @@ public class ShareAdminController {
         // 处理业务
         return shareAdminService.auditById(shareId, shareAuditDTO);
     }
+
+    @PostMapping("/audit/test")
+    public Share auditTest(@RequestBody ShareAuditDTO shareAuditDTO) {
+
+        return Share.builder().id(UUID.randomUUID().toString()).author("oysq").build();
+    }
+
+
 
 }

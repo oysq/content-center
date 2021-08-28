@@ -21,6 +21,10 @@ ________
 * `MySQL`
 * `RocketMQ`
 
+#### 可视化界面
+* `RocketMQ-Console`
+* `Zipkin`
+
 #### 其他插件
 * `mybatis-plus`
 * `Lombok`
@@ -536,3 +540,13 @@ filters:
     * SR (server received)：服务器接收并准备处理它。
     * SS (server sent)：服务器处理结束，准备响应客户端。
     * CR (client received)：客户端成功接收到服务器的响应，这是一个 span 的结束。
+   
+#### zipkin
+1. 下载地址 [链接](https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec)
+2. java 启动方式
+   1. curl -sSL https://zipkin.io/quickstart.sh | bash -s
+   2. java -jar zipkin.jar
+3. 使用外部存储
+  * Mysql(性能极差)
+  * ES(需要定时执行额外的工程 zipkin-dependencies.jar 才能生成依赖关系图)
+  * Cassandra
