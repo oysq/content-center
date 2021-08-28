@@ -542,11 +542,19 @@ filters:
     * CR (client received)：客户端成功接收到服务器的响应，这是一个 span 的结束。
    
 #### zipkin
-1. 下载地址 [链接](https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec)
-2. java 启动方式
-   1. curl -sSL https://zipkin.io/quickstart.sh | bash -s
-   2. java -jar zipkin.jar
-3. 使用外部存储
-  * Mysql(性能极差)
-  * ES(需要定时执行额外的工程 zipkin-dependencies.jar 才能生成依赖关系图)
-  * Cassandra
+> ZipKin 是收集、存储、展示链路日志的核心，sleuth/brave 只是应用上报日志的客户端而已。
+
+1. 启动部署
+   1. 下载
+      * `curl -sSL https://zipkin.io/quickstart.sh | bash -s`
+      * 直接下载 [链接](https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec)
+   2. `nohup java -jar zipkin.jar &` 
+   
+2. 使用外部存储
+  * `Mysql`
+    * 性能极差
+  * `ES`
+    * 建议采用这种存储
+    * 支持 ES5+/6+/7+
+    * 需要定时执行额外的工程 zipkin-dependencies.jar 才能生成依赖关系图
+  * `Cassandra`
