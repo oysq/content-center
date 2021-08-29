@@ -24,6 +24,7 @@ ________
 #### 可视化界面
 * `RocketMQ-Console`
 * `Zipkin`
+* `Spring Boot Admin`
 
 #### 其他插件
 * `mybatis-plus`
